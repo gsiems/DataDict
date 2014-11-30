@@ -1,0 +1,148 @@
+body {
+    font-family: verdana,helvetica,sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+h1 {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    color: #eeeeee;
+    font-size: 150%;
+    font-weight: bold;
+    margin-top: 0;
+    padding-bottom: 0.5ex;
+}
+h2 {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    color: #009ace;
+    font-size: 140%;
+    padding-bottom: 0.5ex;
+}
+
+#ReportHeader {
+    background-color: #009ace;
+    border-color: #999999;
+    color: #eeeeee;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #999999;
+}
+#ReportDetails {
+    font-size: 90%;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+#ReportFooter {
+    background-color: #009ACE;
+    border-bottom: 2px solid #999999;
+    border-color: #999999;
+    border-top: 2px solid #999999;
+    color: #EEEEEE;
+    font-size: 90%;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 2px;
+    text-align: right;
+}
+#filter-form {
+    color: #eeeeee;
+    padding-top: 0.5ex;
+    padding-bottom: 1.0ex;
+}
+.TOddRow {
+    background-color: #dddddd;
+}
+.TEvenRow {
+    background-color: #eeeeee;
+}
+.TTextCell {
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: top;
+}
+.TNoWrapCell {
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: top;
+    white-space: nowrap;
+}
+.TNumericCell {
+    padding-left: 4px;
+    padding-right: 8px;
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+#NavContainer ul {
+    background-color: #003366;
+    color: White;
+    float: left;
+    margin-left: 0;
+    padding-left: 0;
+    width: 100%;
+}
+#NavContainer ul li {
+    display: inline;
+}
+#NavContainer ul li a {
+    background-color: #003366;
+    border-right: 1px solid #FFFFFF;
+    color: White;
+    float: left;
+    padding: 0.2em 1em;
+    text-decoration: none;
+}
+#NavContainer ul li a:hover {
+    background-color: #336699;
+    color: #FFFFFF;
+}
+table.tablesorter {
+    text-align: left;
+    vertical-align: top;
+    border-right: 1px solid #777777;
+    border-left: 1px solid #777777;
+    border-bottom: 1px solid #777777;
+    width: 100%;
+}
+table.tablesorter thead tr th {
+    background-color: #dddddd;
+    color: #009ace;
+    padding-left: 4px;
+    padding-right: 15px;
+    border-color: #777777;
+    border-bottom: 3px solid #777777;
+}
+table.tablesorter thead tr .header {
+    background-position: right center;
+    background-repeat: no-repeat;
+    border-bottom: 2px solid #777777;
+    cursor: pointer;
+}
+table.tablesorter thead tr .headerSortDown {
+    background-color: #bfbfbf;
+    background-image: url("../img/desc.gif");
+}
+
+table.tablesorter tbody td {
+    background-color: #dddddd;
+}
+table.tablesorter tbody tr.odd td {
+    background-color: #eeeeee;
+}
+
+@media only print
+{
+    #filter-form  * { display: none !important; }
+    #NavContainer * { display: none !important; }
+    table.tablesorter   thead td { font-size: 50%; border-top: 1px solid black; color: black; }
+    table.tablesorter   tbody td { font-size: 80%; border-top: 1px solid black; }
+    table.notablesorter tbody td { font-size: 80%; border-top: 1px solid black; }
+}
+

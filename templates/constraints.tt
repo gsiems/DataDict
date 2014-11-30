@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    [% ta = ['Constraints for ', database_name, '.', schema_name] %][% title = ta.join('') %]
+    <title>[% title %]</title>
+
+    <meta http-equiv="Content-Type" content="utf-8" />
+    <link rel="stylesheet" href="../css/main.css" type="text/css">
+    <link rel="icon" href="../img/favicon.png" type="image/png">
+    [% UNLESS no_js %]<script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="../js/jquery.uitablefilter.js"></script>
+	<script type="text/javascript">
+$(function() {
+	fkTable = $("#tablesorter-fkdata").tablesorter({sortList:[[1,0],[0,0],[3,0]], widgets: ['zebra']});
+	chkTable = $("#tablesorter-chkdata").tablesorter({sortList:[[0,0],[2,0]], widgets: ['zebra']});
+	uTable = $("#tablesorter-udata").tablesorter({sortList:[[0,0],[2,0]], widgets: ['zebra']});
+	$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
+
+    fkTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    chkTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    uTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    $("#filter").keyup(function() {
+      $.uiTableFilter( fkTable, this.value );
+      $.uiTableFilter( chkTable, this.value );
+      $.uiTableFilter( uTable, this.value );
+    });
+    $('#filter-form').submit(function(){
+      fkTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      chkTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      uTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      return false;
+    }).focus(); //Give focus to input field
+
+});
+    </script>[% END %]
+  </head>
+  <body>
+    [% INCLUDE 'includes/navigation_bar.tt' %]
+
+[% INCLUDE 'includes/db_header.tt' %]
+    <div id="ReportDetails">
+
+[% IF check_constraints %]
+      <h2>Check constraints</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-chkdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR c = check_constraints %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Table</th>
+          <th>Constraint</th>
+          <th>Search Condition</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell"><a href="tables/[% c.0 %].html">[% c.0 %]</a></td>
+          <td class="TNoWrapCell">[% c.1 %]</td>
+          <td class="TTextCell">[% c.2 | html %]</td>
+          <td class="TNoWrapCell">[% c.3 %]</td>
+          <td class="TTextCell">[% c.4 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF unique_constraints %]
+      <h2>Unique constraints</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-udata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR c = unique_constraints %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Table</th>
+          <th>Constraint</th>
+          <th>Columns</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell"><a href="tables/[% c.0 %].html">[% c.0 %]</a></td>
+          <td class="TNoWrapCell">[% c.1 %]</td>
+          <td class="TNoWrapCell">[% c.2 %]</td>
+          <td class="TNoWrapCell">[% c.3 %]</td>
+          <td class="TTextCell">[% c.4 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+
+[% IF fk_constraints %]
+      <h2>Foreign key constraints</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-fkdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR c = fk_constraints %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Constraint</th>
+          <th>Table</th>
+          <th>Columns</th>
+          <th>Indexed?</th>
+          <th>Referenced Table</th>
+          <th>Referenced Columns</th>
+          <th>Rule</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% c.1 %]</td>
+          <td class="TNoWrapCell"><a href="tables/[% c.0 %].html">[% c.0 %]</a></td>
+          <td class="TTextCell">[% c.2 %]</td>
+          <td class="TTextCell">[% c.9 %]</td>
+          <td class="TNoWrapCell">[% c.3 %].<a href="../[% c.3 %]/tables/[% c.4 %].html">[% c.4 %]</a></td>
+          <td class="TTextCell">[% c.5 %]</td>
+          <td class="TTextCell">[% c.6 %]</td>
+          <td class="TNoWrapCell">[% c.7 %]</td>
+          <td class="TTextCell">[% c.8 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+
+[% IF NOT fk_constraints AND NOT check_constraints AND NOT unique_constraints %]
+      <h2>Constraints</h2>
+      <p><b>No constraints extracted for this schema.</b></p>
+[% END %]
+
+    </div>
+    <div id="ReportFooter">
+Report generated by [% bin_file %]</div>
+    <br />
+  </body>
+</html>

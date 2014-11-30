@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    [% ta = ['Table - ', database_name, '.', schema_name, '.', table_name] %][% title = ta.join('') %]
+
+    <title>[% title %]</title>
+
+    <meta http-equiv="Content-Type" content="utf-8" />
+    <link rel="stylesheet" href="../../css/main.css" type="text/css">
+    <link rel="icon" href="../../img/favicon.png" type="image/png">
+    [% UNLESS no_js %]<script type="text/javascript" src="../../js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="../../js/jquery.uitablefilter.js"></script>
+	<script type="text/javascript">
+$(function() {
+	colTable = $("#tablesorter-coldata").tablesorter({sortList:[[1,0]], widgets: ['zebra']});
+	consTable = $("#tablesorter-consdata").tablesorter({sortList:[[1,0],[0,0]], widgets: ['zebra']});
+	idxTable = $("#tablesorter-idxdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+	ikeyTable = $("#tablesorter-ikeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+	ekeyTable = $("#tablesorter-ekeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+	pdepTable = $("#tablesorter-pdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+	cdepTable = $("#tablesorter-cdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+	$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
+
+    colTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    consTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    idxTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    ikeyTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    ekeyTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    pdepTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+    cdepTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
+      $(this).prev().find(":checkbox").click()
+    });
+      $("#filter").keyup(function() {
+      $.uiTableFilter( colTable, this.value );
+      $.uiTableFilter( consTable, this.value );
+      $.uiTableFilter( idxTable, this.value );
+      $.uiTableFilter( ikeyTable, this.value );
+      $.uiTableFilter( ekeyTable, this.value );
+      $.uiTableFilter( pdepTable, this.value );
+      $.uiTableFilter( cdepTable, this.value );
+    });
+    $('#filter-form').submit(function(){
+      colTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      consTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      idxTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      ikeyTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      ekeyTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      pdepTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      cdepTable.find("tbody > tr:visible > td:eq(1)").mousedown();
+      return false;
+    }).focus(); //Give focus to input field
+
+});
+    </script>[% END %]
+
+  </head>
+  <body>
+    [% nav_prefix = '../' %]
+    [% INCLUDE 'includes/navigation_bar.tt' %]
+    [% INCLUDE 'includes/db_header.tt' %]
+    <div id="ReportDetails">
+      <h2>Columns</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-coldata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR c = columns %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Column</th>
+          <th>Ordinal Position</th>
+          <th>Data Type</th>
+          <th>Nulls</th>
+          <th>Default</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+  [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% c.0 %]</td>
+          <td class="TNumericCell">[% c.1 %]</td>
+          <td class="TNoWrapCell">[% c.2 %]</td>
+          <td class="TNoWrapCell">[% c.3 %]</td>
+          <td class="TNoWrapCell">[% c.4 %]</td>
+          <td class="TTextCell">[% c.5 | html %]</td>
+        </tr>
+[% END %]
+        </tbody>
+      </table>
+      <br />
+
+[% IF table_type != 'VIEW' %]
+
+[% IF table_type == 'TABLE' %]
+      <h2>Constraints</h2>
+[% IF constraints %]
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-consdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR c = constraints %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Columns</th>
+          <th>Search Condition</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% c.0 %]</td>
+          <td class="TNoWrapCell">[% c.1 %]</td>
+          <td class="TTextCell">[% c.2 %]</td>
+          <td class="TNoWrapCell">[% c.3 | html %]</td>
+          <td class="TNoWrapCell">[% c.4 %]</td>
+          <td class="TTextCell">[% c.5 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+[% END %]
+
+      <h2>Indices</h2>
+[% IF indices %]
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-idxdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR i = indices %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Unique ?</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% i.0 %]</td>
+          <td class="TNoWrapCell">[% i.1 %]</td>
+          <td class="TNoWrapCell">[% i.2 %]</td>
+          <td class="TTextCell">[% i.3 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF table_type == 'TABLE' %]
+      <h2>Foreign keys</h2>
+[% IF parent_keys %]
+      <p><b>Parents (references)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ikeydata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR k = parent_keys %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Indexed?</th>
+          <th>Referenced Table</th>
+          <th>Referenced Columns</th>
+          <th>Rule</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% k.0 %]</td>
+          <td class="TTextCell">[% k.1 %]</td>
+          <td class="TTextCell">[% k.7 %]</td>
+          <td class="TNoWrapCell">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
+          <td class="TTextCell">[% k.4 %]</td>
+          <td class="TNoWrapCell">[% k.5 %]</td>
+          <td class="TTextCell">[% k.6 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF child_keys %]
+      <p><b>Children (referenced by)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ekeydata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR k = child_keys %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Referencing Table</th>
+          <th>Referencing Columns</th>
+          <th>Indexed?</th>
+          <th>Rule</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% k.0 %]</td>
+          <td class="TTextCell">[% k.1 %]</td>
+          <td class="TNoWrapCell">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
+          <td class="TTextCell">[% k.4 %]</td>
+          <td class="TNoWrapCell">[% k.7 %]</td>
+          <td class="TNoWrapCell">[% k.5 %]</td>
+          <td class="TTextCell">[% k.6 | html %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+[% END %]
+[% END %]
+
+[% IF dependencies OR dependents OR dependency_error %]
+      <h2>Dependencies</h2>
+
+[% IF dependencies %]
+      <p><b>Parents (this depends on)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-pdepdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR k = dependencies %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Object Schema</th>
+          <th>Object Name</th>
+          <th>Object Type</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% k.0 %]</td>
+          <td class="TNoWrapCell">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
+          <td class="TNoWrapCell">[% k.2 %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% ELSIF dependency_error %]
+      <p><b>[% dependency_error %]</b></p>
+
+[% END %]
+[% IF dependents %]
+      <p><b>Children (depends on this)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-cdepdata" class="tablesorter"[% END %]>
+[% row_format = 'TEvenRow' %]
+[% FOR k = dependents %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Object Schema</th>
+          <th>Object Name</th>
+          <th>Object Type</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr class="[% row_format %]">
+          <td class="TNoWrapCell">[% k.0 %]</td>
+          <td class="TNoWrapCell">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
+          <td class="TNoWrapCell">[% k.2 %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+
+[% END %]
+[% END %]
+
+[% IF query %]
+      <h2>Query</h2>
+<pre class="CodeSnippet">
+[% query | html %]
+</pre>
+[% END %]
+
+    </div>
+    <div id="ReportFooter">
+Report generated by [% bin_file %]</div>
+    <br />
+  </body>
+</html>
