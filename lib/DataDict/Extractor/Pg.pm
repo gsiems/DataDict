@@ -304,6 +304,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         c.relname AS table_name,
         CASE c.relkind
             WHEN 'f' THEN 'FOREIGN TABLE'
+            WHEN 'm' THEN 'MATERIALIZED VIEW'
             WHEN 'r' THEN 'TABLE'
             WHEN 'v' THEN 'VIEW'
             END AS table_type,
@@ -311,6 +312,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         c2.relname AS referenced_name,
         CASE c2.relkind
             WHEN 'f' THEN 'FOREIGN TABLE'
+            WHEN 'm' THEN 'MATERIALIZED VIEW'
             WHEN 'r' THEN 'TABLE'
             WHEN 't' THEN 'TABLE'
             WHEN 'v' THEN 'VIEW'
@@ -324,7 +326,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         ON ( c2.oid = d.child_oid )
     LEFT OUTER JOIN pg_catalog.pg_namespace n2
         ON ( n2.oid = c2.relnamespace )
-    WHERE c.relkind IN ( 'v', 'r', 'f' )
+    WHERE c.relkind IN ( 'v', 'r', 'f', 'm' )
         AND n.nspname = ? $table_filter
 };
     # from pg_class.h
@@ -382,6 +384,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         c.relname AS table_name,
         CASE c.relkind
             WHEN 'f' THEN 'FOREIGN TABLE'
+            WHEN 'm' THEN 'MATERIALIZED VIEW'
             WHEN 'r' THEN 'TABLE'
             WHEN 'v' THEN 'VIEW'
             END AS table_type,
@@ -389,6 +392,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         c2.relname AS referenced_name,
         CASE c2.relkind
             WHEN 'f' THEN 'FOREIGN TABLE'
+            WHEN 'm' THEN 'MATERIALIZED VIEW'
             WHEN 'r' THEN 'TABLE'
             WHEN 't' THEN 'TABLE'
             WHEN 'v' THEN 'VIEW'
@@ -402,7 +406,7 @@ SELECT DISTINCT pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         ON ( c2.oid = d.parent_oid )
     LEFT OUTER JOIN pg_catalog.pg_namespace n2
         ON ( n2.oid = c2.relnamespace )
-    WHERE c.relkind IN ( 'v', 'r', 'f' )
+    WHERE c.relkind IN ( 'v', 'r', 'f', 'm' )
         AND n.nspname = ? $table_filter
 };
 
@@ -739,7 +743,7 @@ SELECT n.nspname AS table_schema,
     LEFT OUTER JOIN pg_attrdef ad
         ON ( a.attrelid = ad.adrelid
             AND a.attnum = ad.adnum )
-    WHERE c.relkind IN ( 'v', 'r', 'f' )
+    WHERE c.relkind IN ( 'v', 'r', 'f', 'm' )
         AND n.nspname = ? $table_filter
     ORDER BY a.attnum
 };
@@ -780,8 +784,9 @@ SELECT '' AS catalog_name,
         n.nspname AS table_schema,
         pg_catalog.pg_get_userbyid ( c.relowner ) AS table_owner,
         CASE c.relkind
-            WHEN 'r' THEN 'TABLE'
             WHEN 'f' THEN 'FOREIGN TABLE'
+            WHEN 'm' THEN 'MATERIALIZED VIEW'
+            WHEN 'r' THEN 'TABLE'
             WHEN 'v' THEN 'VIEW'
             END AS table_type,
         c.relname AS table_name,
@@ -802,7 +807,7 @@ SELECT '' AS catalog_name,
             AND NOT a.attisdropped )
     LEFT OUTER JOIN pg_catalog.pg_stat_all_tables s
         ON ( c.oid = s.relid )
-    WHERE c.relkind IN ( 'v', 'r', 'f' )
+    WHERE c.relkind IN ( 'v', 'r', 'f', 'm' )
         AND n.nspname = ? $table_filter
     GROUP BY n.nspname,
         c.relowner,
@@ -829,26 +834,6 @@ SELECT '' AS catalog_name,
     }
 
     # Add foreign data wrapper details
-
-=pod
-SELECT n.nspname AS table_schema,
-        c.relname AS table_name,
-        s.srvname AS "Server",
-        array_to_string ( array (
-                SELECT quote_ident ( option_name ) || ' ' || quote_literal ( option_value )
-                    FROM pg_options_to_table ( s.srvoptions || ft.ftoptions )
-            ),
-            ', ')
-    FROM pg_catalog.pg_foreign_table ft
-    INNER JOIN pg_catalog.pg_class c
-        ON c.oid = ft.ftrelid
-    INNER JOIN pg_catalog.pg_namespace n
-        ON n.oid = c.relnamespace
-    INNER JOIN pg_catalog.pg_foreign_server s
-        ON s.oid = ft.ftserver
-    WHERE n.nspname = ? $table_filter ;
-=cut
-
     $query = qq{
 SELECT n.nspname AS table_schema,
         c.relname AS table_name,
