@@ -791,7 +791,7 @@ SELECT '' AS catalog_name,
             END AS table_type,
         c.relname AS table_name,
         '' AS tablespace_name,
-        s.n_live_tup AS row_count,
+        c.reltuples::bigint AS row_count,
         count ( a.attname ) AS column_count,
         pg_catalog.obj_description ( c.oid, 'pg_class' ) AS comments,
         CASE c.relkind
@@ -805,15 +805,13 @@ SELECT '' AS catalog_name,
         ON ( c.oid = a.attrelid
             AND a.attnum > 0
             AND NOT a.attisdropped )
-    LEFT OUTER JOIN pg_catalog.pg_stat_all_tables s
-        ON ( c.oid = s.relid )
     WHERE c.relkind IN ( 'v', 'r', 'f', 'm' )
         AND n.nspname = ? $table_filter
     GROUP BY n.nspname,
         c.relowner,
         c.relkind,
         c.relname,
-        s.n_live_tup,
+        c.reltuples,
         c.oid
     ORDER BY n.nspname,
         c.relname
