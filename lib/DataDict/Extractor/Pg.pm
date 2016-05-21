@@ -852,7 +852,7 @@ SELECT n.nspname AS table_schema,
 };
 
     $sth          = $self->_db_prepare($query);
-    @column_names = ( qw( table_schema table_name server table_options ) );
+    @column_names = (qw( table_schema table_name server table_options ));
 
     $sth->execute($schema) || $self->_log_fatal( $sth->errstr );
     foreach my $row ( @{ $sth->fetchall_arrayref } ) {
