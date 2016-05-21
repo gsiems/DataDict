@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
     [% ta = ['Odd things - ', database_name, '.', schema_name] %][% title = ta.join('') %]
 
@@ -19,8 +18,7 @@
       <h2>Tables that display potential oddness</h2>
 [% IF table_oddities %]
       <table class="notablesorter">
-[% row_format = 'TEvenRow' %]
-[% FOR t = table_oddities %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR t = table_oddities %][% IF loop.first() %]
         <thead>
           <tr>
           <th>Table</th>
@@ -35,7 +33,7 @@
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell"><a href="tables/[% t.0 %].html">[% t.0 %]</a></td>
           <td class="TNoWrapCell">[% IF t.1 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
           <td class="TNoWrapCell">[% IF t.2 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
@@ -56,8 +54,7 @@
       <h2>Columns that display potential oddness</h2>
 [% IF column_oddities %]
       <table class="notablesorter">
-[% row_format = 'TEvenRow' %]
-[% FOR t = column_oddities %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR t = column_oddities %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Table</th>
@@ -69,7 +66,7 @@
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell"><a href="tables/[% t.0 %].html">[% t.0 %]</a></td>
           <td class="TNoWrapCell">[% t.1 %]</td>
           <td class="TNoWrapCell">[% IF t.2 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
@@ -87,8 +84,7 @@
       <h2>Foreign keys with no index</h2>
 [% IF index_oddities %]
       <table class="notablesorter">
-[% row_format = 'TEvenRow' %]
-[% FOR t = index_oddities %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR t = index_oddities %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Constraint</th>
@@ -99,7 +95,7 @@
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% t.2 %]</td>
           <td class="TNoWrapCell"><a href="tables/[% t.0 %].html">[% t.0 %]</a></td>
           <td class="TNoWrapCell">[% t.1 %]</td>

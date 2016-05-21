@@ -55,12 +55,6 @@ h2 {
     padding-top: 0.5ex;
     padding-bottom: 1.0ex;
 }
-.TOddRow {
-    background-color: #dddddd;
-}
-.TEvenRow {
-    background-color: #eeeeee;
-}
 .TTextCell {
     padding-left: 4px;
     padding-right: 4px;
@@ -135,6 +129,19 @@ table.tablesorter tbody td {
 }
 table.tablesorter tbody tr.odd td {
     background-color: #eeeeee;
+}
+
+table tr:nth-child(even) {
+    color: #009ace;
+    background-color: #eeeeee;
+}
+table tr:nth-child(odd) {
+    color: #009ace;
+    background-color: #dddddd;
+}
+
+.mono {
+    font-family: Bitstream Vera Sans Mono, Consolas, Courier New, DejaVu Sans Mono, Liberation Mono, Lucida Console, Monaco, monospace;
 }
 
 @media only print

@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
     [% ta = ['Domains for ', database_name, '.', schema_name] %][% title = ta.join('') %]
 
@@ -12,10 +11,10 @@
     [% UNLESS no_js %]<script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="../js/jquery.tablesorter.js"></script>
     <script type="text/javascript" src="../js/jquery.uitablefilter.js"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 $(function() {
-	theTable = $("#tablesorter-data").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
+    theTable = $("#tablesorter-data").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    $("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
     theTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
       $(this).prev().find(":checkbox").click()
     });
@@ -37,8 +36,7 @@ $(function() {
     <div id="ReportDetails">
 [% IF domains %]
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-data" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR d = domains %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR d = domains %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Name</th>
@@ -52,7 +50,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% d.0 %]</td>
           <td class="TNoWrapCell">[% d.1 %]</td>
           <td class="TNoWrapCell">[% d.2 %]</td>

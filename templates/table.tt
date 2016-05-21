@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
   <head>
     [% ta = ['Table - ', database_name, '.', schema_name, '.', table_name] %][% title = ta.join('') %]
 
@@ -12,16 +11,16 @@
     [% UNLESS no_js %]<script type="text/javascript" src="../../js/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="../../js/jquery.tablesorter.js"></script>
     <script type="text/javascript" src="../../js/jquery.uitablefilter.js"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 $(function() {
-	colTable = $("#tablesorter-coldata").tablesorter({sortList:[[1,0]], widgets: ['zebra']});
-	consTable = $("#tablesorter-consdata").tablesorter({sortList:[[1,0],[0,0]], widgets: ['zebra']});
-	idxTable = $("#tablesorter-idxdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	ikeyTable = $("#tablesorter-ikeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	ekeyTable = $("#tablesorter-ekeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	pdepTable = $("#tablesorter-pdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	cdepTable = $("#tablesorter-cdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
-	$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
+    colTable = $("#tablesorter-coldata").tablesorter({sortList:[[1,0]], widgets: ['zebra']});
+    consTable = $("#tablesorter-consdata").tablesorter({sortList:[[1,0],[0,0]], widgets: ['zebra']});
+    idxTable = $("#tablesorter-idxdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    ikeyTable = $("#tablesorter-ikeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    ekeyTable = $("#tablesorter-ekeydata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    pdepTable = $("#tablesorter-pdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    cdepTable = $("#tablesorter-cdepdata").tablesorter({sortList:[[0,0]], widgets: ['zebra']});
+    $("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
 
     colTable.find("tbody > tr").find("td:eq(1)").mousedown(function(){
       $(this).prev().find(":checkbox").click()
@@ -75,8 +74,7 @@ $(function() {
     <div id="ReportDetails">
       <h2>Columns</h2>
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-coldata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR c = columns %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR c = columns %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Column</th>
@@ -89,7 +87,7 @@ $(function() {
         </thead>
         <tbody>
   [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% c.0 %]</td>
           <td class="TNumericCell">[% c.1 %]</td>
           <td class="TNoWrapCell">[% c.2 %]</td>
@@ -108,8 +106,7 @@ $(function() {
       <h2>Constraints</h2>
 [% IF constraints %]
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-consdata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR c = constraints %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR c = constraints %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Name</th>
@@ -122,7 +119,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% c.0 %]</td>
           <td class="TNoWrapCell">[% c.1 %]</td>
           <td class="TTextCell">[% c.2 %]</td>
@@ -140,8 +137,7 @@ $(function() {
       <h2>Indices</h2>
 [% IF indices %]
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-idxdata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR i = indices %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR i = indices %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Name</th>
@@ -152,7 +148,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% i.0 %]</td>
           <td class="TNoWrapCell">[% i.1 %]</td>
           <td class="TNoWrapCell">[% i.2 %]</td>
@@ -169,8 +165,7 @@ $(function() {
 [% IF parent_keys %]
       <p><b>Parents (references)</b></p>
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ikeydata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR k = parent_keys %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR k = parent_keys %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Name</th>
@@ -184,7 +179,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% k.0 %]</td>
           <td class="TTextCell">[% k.1 %]</td>
           <td class="TTextCell">[% k.7 %]</td>
@@ -202,8 +197,7 @@ $(function() {
 [% IF child_keys %]
       <p><b>Children (referenced by)</b></p>
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ekeydata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR k = child_keys %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR k = child_keys %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Name</th>
@@ -217,7 +211,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% k.0 %]</td>
           <td class="TTextCell">[% k.1 %]</td>
           <td class="TNoWrapCell">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
@@ -240,8 +234,7 @@ $(function() {
 [% IF dependencies %]
       <p><b>Parents (this depends on)</b></p>
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-pdepdata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR k = dependencies %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR k = dependencies %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Object Schema</th>
@@ -251,7 +244,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% k.0 %]</td>
           <td class="TNoWrapCell">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
           <td class="TNoWrapCell">[% k.2 %]</td>
@@ -267,8 +260,7 @@ $(function() {
 [% IF dependents %]
       <p><b>Children (depends on this)</b></p>
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-cdepdata" class="tablesorter"[% END %]>
-[% row_format = 'TEvenRow' %]
-[% FOR k = dependents %][% row_format = IF row_format == 'TEvenRow' %]TOddRow[% ELSE %]TEvenRow[% END %][% IF loop.first() %]
+[% FOR k = dependents %][% IF loop.first() %]
         <thead>
         <tr>
           <th>Object Schema</th>
@@ -278,7 +270,7 @@ $(function() {
         </thead>
         <tbody>
     [% END %]
-        <tr class="[% row_format %]">
+        <tr>
           <td class="TNoWrapCell">[% k.0 %]</td>
           <td class="TNoWrapCell">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
           <td class="TNoWrapCell">[% k.2 %]</td>
@@ -293,9 +285,9 @@ $(function() {
 
 [% IF query %]
       <h2>Query</h2>
-<pre class="CodeSnippet">
-[% query | html %]
-</pre>
+<div class="mono">
+[% query %]
+</div>
 [% END %]
 
     </div>
