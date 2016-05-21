@@ -539,6 +539,12 @@ sub build_table_doc {
 
         my $query = $objects->{'TABLE'}{$table_name}{query} || '';
         if ( $query && $config->get_value('show_sql') ) {
+
+            $query =~ s|\n|\n<br/>|g;
+            $query =~ s|^ +||;
+            $query =~ s| +$||;
+            $query =~ s|  | &nbsp;|g;
+
             $temp{$table_name}{query} = $query;
 
             if ( exists $objects->{'DEPENDENCY'} && exists $objects->{'DEPENDENCY'}{$table_name} ) {
