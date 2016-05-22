@@ -46,7 +46,7 @@ $(function() {
         <tr>
           <td class="TTextCell"><a href="[% s.0 %]/tables.html">[% s.0 %]</a></td>
           <td class="TTextCell">[% s.1 %]</td>
-          <td class="TTextCell">[% s.2 | html %]</td>
+          <td class="TTextCell">[% s.2 %]</td>
         </tr>
 [% END %]
       </tbody>

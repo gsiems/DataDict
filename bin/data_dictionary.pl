@@ -25,14 +25,21 @@ my $logger    = $config->get_value('logger') || DataDict::Logger->new_logger();
 my $extractor = DataDict::Extractor->new_extractor( 'config' => $config );
 my $util      = DataDict::Util->new_util( 'config' => $config );
 
+my $wiki_format = $config->get_value('wiki_format');
+my $formatter;
+if ( $wiki_format eq 'Markdown' ) {
+    use Text::Markdown 'markdown';
+    $formatter = Text::Markdown->new();
+}
+
 my %tt_vars;
 foreach (qw(database_name bin_file run_timestamp no_js)) {
     if ( exists $config->{$_} ) {
         $tt_vars{$_} = $config->{$_};
     }
 }
-my $db_version  = $extractor->get_db_version()  || '';
-my $db_comment  = $extractor->get_db_comment()  || '';
+my $db_version = $extractor->get_db_version() || '';
+my $db_comment = format_comment( $extractor->get_db_comment() || '' );
 my $db_encoding = $extractor->get_db_encoding() || '';
 
 $logger->log_debug("Db Version is $db_version ...");
@@ -67,7 +74,7 @@ if ( %schemas && keys %schemas ) {
         $extractor->set_schema($schema_name);
 
         my $schema_owner = $schemas{$schema_name}{schema_owner};
-        my $comments     = $schemas{$schema_name}{comments};
+        my $comments     = format_comment( $schemas{$schema_name}{comments} );
         push @schema_list, [ $schema_name, $schema_owner, $comments ];
 
         $tt_vars{schema_name}    = $schema_name;
@@ -193,7 +200,7 @@ sub build_column_list {
             my $position    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{ordinal_position};
             my $nullable    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{is_nullable};
             my $default     = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{data_default};
-            my $comments    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{comments};
+            my $comments    = format_comment( $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{comments} );
             push @data, [ $table_name, $column_name, $position, $data_type, $nullable, $default, $comments ];
         }
     }
@@ -210,7 +217,7 @@ sub build_chk_constraint_list {
         foreach my $cons_name ( sort keys %{ $objects->{'CHECK CONSTRAINT'}{$table_name} } ) {
             my $search_condition = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{search_condition};
             my $status           = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{status};
-            my $comments         = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{comments};
+            my $comments         = format_comment( $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{comments} );
             unless ($search_condition) {
                 $logger->log_warning("No search condition found for $table_name ($cons_name) check constraint");
                 next;
@@ -232,7 +239,7 @@ sub build_fk_constraint_list {
         foreach my $cons_name ( sort keys %{ $objects->{'FOREIGN KEY'}{$table_name} } ) {
             my $r_table_schema = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{r_table_schema};
             my $r_table_name   = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{r_table_name};
-            my $comments       = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{comments};
+            my $comments       = format_comment( $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{comments} );
             my $cons_rule      = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{constraint_rule};
             my $status         = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{status};
             my $column_names   = join( ',', @{ $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{column_names} } );
@@ -261,7 +268,7 @@ sub build_uniq_constraint_list {
 
     foreach my $table_name ( sort keys %{ $objects->{'UNIQUE CONSTRAINT'} } ) {
         foreach my $cons_name ( sort keys %{ $objects->{'UNIQUE CONSTRAINT'}{$table_name} } ) {
-            my $comments     = $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{comments};
+            my $comments     = format_comment( $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{comments} );
             my $status       = $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{status};
             my $column_names = join( ',', @{ $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{column_names} } );
             push @data, [ $table_name, $cons_name, $column_names, $status, $comments ];
@@ -301,7 +308,8 @@ sub build_domain_list {
     foreach my $domain_name ( sort keys %{ $objects->{'DOMAIN'} } ) {
         my @ary =
             map { $objects->{'DOMAIN'}{$domain_name}{$_} }
-            (qw(domain_owner data_type is_nullable domain_default check_constraint comments));
+            (qw(domain_owner data_type is_nullable domain_default check_constraint ));
+        push @ary, format_comment( $objects->{'DOMAIN'}{$domain_name}{comments} );
         push @data, [ $domain_name, @ary ];
     }
     $logger->log_debug( scalar @data . " domains listed" );
@@ -495,7 +503,7 @@ sub build_table_list {
         my $table_type   = $objects->{'TABLE'}{$table_name}{table_type};
         my $row_count    = $objects->{'TABLE'}{$table_name}{row_count};
         my $column_count = $objects->{'TABLE'}{$table_name}{column_count};
-        my $comments     = $objects->{'TABLE'}{$table_name}{comments};
+        my $comments     = format_comment( $objects->{'TABLE'}{$table_name}{comments} );
 
         $table_type =
               ( $table_type eq 'TABLE' )             ? 'T'
@@ -519,10 +527,10 @@ sub build_table_doc {
     # columns (and query for views/materialized views)
     foreach my $table_name ( sort keys %{ $objects->{'TABLE'} } ) {
         my $table_type = $objects->{'TABLE'}{$table_name}{table_type};
-        $temp{$table_name}{row_count}     = $objects->{'TABLE'}{$table_name}{row_count}   || '';
-        $temp{$table_name}{table_owner}   = $objects->{'TABLE'}{$table_name}{table_owner} || '';
-        $temp{$table_name}{table_comment} = $objects->{'TABLE'}{$table_name}{comments}    || '';
-        $temp{$table_name}{table_type}    = $objects->{'TABLE'}{$table_name}{table_type};
+        $temp{$table_name}{row_count}   = $objects->{'TABLE'}{$table_name}{row_count}   || '';
+        $temp{$table_name}{table_owner} = $objects->{'TABLE'}{$table_name}{table_owner} || '';
+        $temp{$table_name}{table_comment} = format_comment( $objects->{'TABLE'}{$table_name}{comments} || '' );
+        $temp{$table_name}{table_type} = $objects->{'TABLE'}{$table_name}{table_type};
 
         my @column_names = @{ $objects->{'COLUMN'}{$table_name}{column_names} };
         my @data_types   = @{ $objects->{'COLUMN'}{$table_name}{data_types} };
@@ -532,7 +540,7 @@ sub build_table_doc {
             my $position    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{ordinal_position};
             my $nullable    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{is_nullable};
             my $default     = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{data_default};
-            my $comments    = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{comments};
+            my $comments    = format_comment( $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{comments} );
             push @{ $temp{$table_name}{columns} },
                 [ $column_name, $position, $data_type, $nullable, $default, $comments ];
         }
@@ -540,6 +548,10 @@ sub build_table_doc {
         my $query = $objects->{'TABLE'}{$table_name}{query} || '';
         if ( $query && $config->get_value('show_sql') ) {
 
+            # Hack the SQL text to better display in the browser. Since
+            # not all queries will be neatly formatted we want to allow
+            # text wrapping (not using pre tag any more) while still
+            # respecting wrapping/indentation of neatly formatted queries.
             $query =~ s|\n|\n<br/>|g;
             $query =~ s|^ +||;
             $query =~ s| +$||;
@@ -581,7 +593,7 @@ sub build_table_doc {
         foreach my $cons_name ( sort keys %{ $objects->{'CHECK CONSTRAINT'}{$table_name} } ) {
             my $search_condition = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{search_condition};
             my $status           = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{status};
-            my $comments         = $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{comments};
+            my $comments         = format_comment( $objects->{'CHECK CONSTRAINT'}{$table_name}{$cons_name}{comments} );
             unless ($search_condition) {
                 $logger->log_warning("No search condition found for $table_name ($cons_name) check constraint");
                 next;
@@ -594,7 +606,7 @@ sub build_table_doc {
     foreach my $table_name ( sort keys %{ $objects->{'UNIQUE CONSTRAINT'} } ) {
         foreach my $cons_name ( sort keys %{ $objects->{'UNIQUE CONSTRAINT'}{$table_name} } ) {
             next unless ( exists $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{column_names} );
-            my $comments     = $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{comments};
+            my $comments     = format_comment( $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{comments} );
             my $status       = $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{status};
             my $column_names = join( ',', @{ $objects->{'UNIQUE CONSTRAINT'}{$table_name}{$cons_name}{column_names} } );
             push @{ $temp{$table_name}{constraints} },
@@ -604,7 +616,7 @@ sub build_table_doc {
     foreach my $table_name ( sort keys %{ $objects->{'PRIMARY KEY'} } ) {
         next unless ( exists $objects->{'PRIMARY KEY'}{$table_name}{column_names} );
         my $cons_name    = $objects->{'PRIMARY KEY'}{$table_name}{constraint_name};
-        my $comments     = $objects->{'PRIMARY KEY'}{$table_name}{comments};
+        my $comments     = format_comment( $objects->{'PRIMARY KEY'}{$table_name}{comments} );
         my $status       = $objects->{'PRIMARY KEY'}{$table_name}{status};
         my $column_names = join( ',', @{ $objects->{'PRIMARY KEY'}{$table_name}{column_names} } );
         push @{ $temp{$table_name}{constraints} },
@@ -617,7 +629,7 @@ sub build_table_doc {
         foreach my $index_name ( sort keys %{ $objects->{'INDEX'}{$table_name} } ) {
             next unless ( exists $objects->{'INDEX'}{$table_name}{$index_name}{column_names} );
             my $is_unique = $objects->{'INDEX'}{$table_name}{$index_name}{is_unique};
-            my $comments  = $objects->{'INDEX'}{$table_name}{$index_name}{comments};
+            my $comments  = format_comment( $objects->{'INDEX'}{$table_name}{$index_name}{comments} );
 
             my @columns = @{ $objects->{'INDEX'}{$table_name}{$index_name}{column_names} };
             my @decends = @{ $objects->{'INDEX'}{$table_name}{$index_name}{decends} };
@@ -636,7 +648,7 @@ sub build_table_doc {
         foreach my $cons_name ( sort keys %{ $objects->{'FOREIGN KEY'}{$table_name} } ) {
             my $r_table_schema = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{r_table_schema};
             my $r_table_name   = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{r_table_name};
-            my $comments       = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{comments};
+            my $comments       = format_comment( $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{comments} );
             my $cons_rule      = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{constraint_rule};
             #my $status         = $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{status};
             my $column_names   = join( ',', @{ $objects->{'FOREIGN KEY'}{$table_name}{$cons_name}{column_names} } );
@@ -659,8 +671,9 @@ sub build_table_doc {
             foreach my $cons_name ( sort keys %{ $objects->{'CHILD KEY'}{$table_name}{$r_table_schema} } ) {
 
                 my $r_table_name = $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{r_table_name};
-                my $comments     = $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{comments};
-                my $cons_rule    = $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{constraint_rule};
+                my $comments =
+                    format_comment( $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{comments} );
+                my $cons_rule = $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{constraint_rule};
                 #my $status         = $objects->{'CHILD KEY'}{$table_name}{$cons_name}{status};
                 my $column_names =
                     join( ',', @{ $objects->{'CHILD KEY'}{$table_name}{$r_table_schema}{$cons_name}{column_names} } );
@@ -742,6 +755,26 @@ sub write_file {
     my $writer = DataDict::Writer->new_writer( 'file' => $target_path );
     $writer->write($text);
     $writer->close();
+}
+
+sub format_comment {
+    my ($comment) = @_;
+
+    if ($comment) {
+        # Use markdown if configured to do so. If not then we need to escape
+        # the html here rather than in the template (as before).
+        if ($formatter) {
+            $comment = $formatter->markdown($comment);
+        }
+        else {
+            $comment =~ s/&/&amp;/g;
+            $comment =~ s/</&lt;/g;
+            $comment =~ s/>/&gt;/g;
+            $comment =~ s/"/&quot;/g;
+        }
+    }
+
+    return $comment;
 }
 
 1;

@@ -67,7 +67,7 @@ $(function() {
           <td class="TNoWrapCell">[% c.1 %]</td>
           <td class="TTextCell">[% c.2 | html %]</td>
           <td class="TNoWrapCell">[% c.3 %]</td>
-          <td class="TTextCell">[% c.4 | html %]</td>
+          <td class="TTextCell">[% c.4 %]</td>
         </tr>
   [% END %]
         </tbody>
@@ -95,7 +95,7 @@ $(function() {
           <td class="TNoWrapCell">[% c.1 %]</td>
           <td class="TNoWrapCell">[% c.2 %]</td>
           <td class="TNoWrapCell">[% c.3 %]</td>
-          <td class="TTextCell">[% c.4 | html %]</td>
+          <td class="TTextCell">[% c.4 %]</td>
         </tr>
   [% END %]
         </tbody>
@@ -132,7 +132,7 @@ $(function() {
           <td class="TTextCell">[% c.5 %]</td>
           <td class="TTextCell">[% c.6 %]</td>
           <td class="TNoWrapCell">[% c.7 %]</td>
-          <td class="TTextCell">[% c.8 | html %]</td>
+          <td class="TTextCell">[% c.8 %]</td>
         </tr>
   [% END %]
         </tbody>
