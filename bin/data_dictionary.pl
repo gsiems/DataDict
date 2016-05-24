@@ -555,7 +555,7 @@ sub build_table_doc {
             $query =~ s|\n|\n<br/>|g;
             $query =~ s|^ +||;
             $query =~ s| +$||;
-            $query =~ s|  | &nbsp;|g;
+            $query =~ s|  |&nbsp; |g;
 
             $temp{$table_name}{query} = $query;
 
