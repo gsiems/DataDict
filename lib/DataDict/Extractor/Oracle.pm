@@ -878,7 +878,8 @@ SELECT DISTINCT owner
 UNION
 SELECT owner
     FROM sys.$obj_table
-    WHERE owner NOT IN ( $not_in ) $valid $schema
+    WHERE object_type IN ( 'TABLE', 'VIEW', 'MATERIALIZED VIEW' )
+        AND owner NOT IN ( $not_in ) $valid $schema
 };
 
     foreach my $row ( $self->_db_query($str) ) {
