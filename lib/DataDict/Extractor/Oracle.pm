@@ -909,6 +909,64 @@ SELECT owner
         $return{$name}{schema_owner} = $name;
         $return{$name}{comments}     = '';
     }
+
+    # Since Oracle does not support commenting on schemas, add any
+    # schema comment information found by other means.
+    # First, see if the database is using: https://github.com/gsiems/oracle-comments
+    {
+        my $str = q{
+    SELECT object_name,
+            comments
+        FROM db_comments.v_global_comment
+        WHERE object_type = 'SCHEMA'
+    };
+
+        # The schema may not exist, so don't fail if it cannot be found
+        my $sth = $self->{dbh}->prepare($str);
+        if ($sth) {
+            $sth->execute();
+            my @results = @{ $sth->fetchall_arrayref() };
+            foreach my $row (@results) {
+                my $name = $row->[0];
+                if ( exists $return{$name} ) {
+                    $return{$name}{comments} = $row->[1];
+                }
+            }
+        }
+    }
+
+    # We sometimes fake it [schema comments] by creating a view in the
+    # schema of the form:
+    #   CREATE VIEW schema_comment as SELECT 'blah, blah, blah ... ' AS schema_comment FROM dual ;
+    {
+        my $str = qq{
+    SELECT owner
+            object_name
+        FROM sys.$obj_table
+        WHERE object_type = 'VIEW'
+            AND object_name = 'SCHEMA_COMMENT'
+            AND owner NOT IN ( $not_in ) $schema
+    };
+
+        foreach my $row ( $self->_db_query($str) ) {
+            my $name = $row->[0];
+            if ( exists $return{$name} ) {
+
+                my $sth = $self->{dbh}->prepare( 'SELECT schema_comment FROM ' . $name . '.schema_comment' );
+                if ($sth) {
+                    $sth->execute();
+                    my @results = @{ $sth->fetchall_arrayref() };
+                    my @ary;
+                    foreach my $row (@results) {
+                        push @ary, $row->[0];
+                    }
+                    my $comment = join( "\n", @ary );
+                    $return{$name}{comments} = $comment;
+                }
+            }
+        }
+    }
+
     return wantarray ? %return : \%return;
 }
 
