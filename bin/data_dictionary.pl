@@ -771,6 +771,7 @@ sub format_comment {
             $comment =~ s/</&lt;/g;
             $comment =~ s/>/&gt;/g;
             $comment =~ s/"/&quot;/g;
+            $comment = '<p>' . $comment . '</p>';
         }
     }
 
