@@ -27,7 +27,7 @@ my $util      = DataDict::Util->new_util( 'config' => $config );
 
 my $wiki_format = $config->get_value('wiki_format');
 my $formatter;
-if ( $wiki_format eq 'Markdown' ) {
+if ( $wiki_format && $wiki_format eq 'Markdown' ) {
     use Text::Markdown 'markdown';
     $formatter = Text::Markdown->new();
 }
