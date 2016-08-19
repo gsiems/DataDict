@@ -472,6 +472,26 @@ SELECT  d.parameter,
     return $encoding;
 }
 
+sub get_db_comment {
+    my ($self) = @_;
+    $self->{logger}->log_info("Retrieving database comment information...");
+
+    {
+        my $str = q{
+    SELECT comments
+        FROM db_comments.database_comment
+    };
+
+        my $sth = $self->{dbh}->prepare($str);
+        if ($sth) {
+            $sth->execute();
+            my $row = $sth->fetch();
+            return $row->[0];
+        }
+    }
+    return undef;
+}
+
 sub get_db_version {
     my ($self) = @_;
     $self->{logger}->log_info("Retrieving database version information ...");
