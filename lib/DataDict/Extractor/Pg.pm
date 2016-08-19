@@ -796,6 +796,7 @@ SELECT '' AS catalog_name,
         pg_catalog.obj_description ( c.oid, 'pg_class' ) AS comments,
         CASE c.relkind
             WHEN 'v' THEN pg_catalog.pg_get_viewdef ( c.oid, true )
+            WHEN 'm' THEN pg_catalog.pg_get_viewdef ( c.oid, true )
             ELSE NULL
             END AS query
     FROM pg_catalog.pg_class c
