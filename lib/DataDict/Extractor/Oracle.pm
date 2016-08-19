@@ -51,11 +51,29 @@ sub compile_schema {
     my ($self) = @_;
     my $schema = $self->{schema};
     $self->{logger}->log_info("Compiling objects in $schema ...");
-    my $str = qq{BEGIN
+
+    my $inv_count;
+
+    {
+        my $obj_table = ( $self->_has_select_priv(qw(dba_objects)) ) ? 'dba_objects' : 'all_objects';
+
+        my $str = qq{
+    SELECT count (*)
+        FROM sys.$obj_table
+        WHERE owner = ?
+            AND object_type IN ( 'TABLE', 'VIEW', 'MATERIALIZED VIEW' )
+            AND status <> 'VALID'
+    };
+        ($inv_count) = $self->_db_fetch( $str, $schema );
+    }
+
+    if ($inv_count) {
+        my $str = qq{BEGIN
 DBMS_UTILITY.COMPILE_SCHEMA ( schema => '$schema' );
 END;
 };
-    $self->_db_do($str);
+        $self->_db_do($str);
+    }
 }
 
 sub extract_data {
