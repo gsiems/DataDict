@@ -1,16 +1,17 @@
   <div id="ReportHeader"><h1>[% title %]</h1>
-    <b>Generated: </b>[% run_timestamp %]<br />
-    <b>Database Version: </b>[% database_version %]<br />
-    <b>Database: </b>[% database_name %]<br />
-    [% IF database_comment %]<b>Database Comment: </b>[% database_comment %]<br />[% END %]
-    [% IF schema_name %]<b>Schema: </b>[% schema_name %]<br />
-      [% IF schema_comment %]<b>Schema Comment: </b>[% schema_comment %]<br />[% END %]
-    [% END %]
-    [% IF table_name && table_name != '' %]
-      <b>Table Name: </b>[% table_name %]<br />
-      <b>Table Type: </b>[% table_type %]<br />
-      <b>Table Comment: </b>[% table_comment %]<br />
-      <b>Row Count: </b>[% row_count %]<br />
-    [% END %]
-    [% UNLESS no_js %]<form id="filter-form"><b>Filter: </b><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form><br />[% END %]
+    <table class="pageheader">
+      <tr><th>Generated:</th><td>[% run_timestamp %]</td></tr>
+      <tr><th>Database Version:</th><td>[% database_version %]</td></tr>
+      <tr><th>Database:</th><td>[% database_name %]</td></tr>
+      [% IF database_comment %]<tr><th>Database Comment:</th><td><div class="comments">[% database_comment %]</div></td></tr>[% END %]
+      [% IF schema_name  && schema_name != '' %]<tr><th>Schema:</th><td>[% schema_name %]</td></tr>
+        [% IF schema_comment %]<tr><th>Schema Comment:</th><td><div class="comments">[% schema_comment %]</div></td></tr>[% END %]
+      [% END %]
+      [% IF table_name && table_name != '' %]<tr><th>Table Name:</th><td>[% table_name %]</td></tr>
+      <tr><th>Table Type:</th><td>[% table_type %]</td></tr>
+      <tr><th>Table Comment:</th><td><div class="comments">[% table_comment %]</div></td></tr>
+      <tr><th>Row Count:</th><td>[% row_count %]</td></tr>
+      [% END %]
+      [% UNLESS no_js %]<tr><th>Filter: </th><td><form id="filter-form"><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form></td></tr>[% END %]
+    </table>
   </div>
