@@ -2,19 +2,15 @@
 <html>
   <head>
     [% ta = ['Odd things - ', database_name, '.', schema_name] %][% title = ta.join('') %]
-
     <title>[% title %]</title>
-
     <meta http-equiv="Content-Type" content="utf-8" />
     <link rel="stylesheet" href="../css/main.css" type="text/css">
     <link rel="icon" href="../img/favicon.png" type="image/png">
   </head>
   <body>
-    [% INCLUDE 'includes/navigation_bar.tt' %]
-
+[% INCLUDE 'includes/navigation_bar.tt' %]
 [% INCLUDE 'includes/db_header.tt' %]
     <div id="ReportDetails">
-
       <h2>Tables that display potential oddness</h2>
 [% IF table_oddities %]
       <table class="notablesorter">
