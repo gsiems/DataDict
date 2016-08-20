@@ -110,19 +110,21 @@ sub get_objects {
 
     $object_type ||= 'UNKNOWN';
 
-    if ( uc $object_type eq 'CHECK CONSTRAINT' )  { return $self->get_check_constraints(@args); }
-    if ( uc $object_type eq 'CHILD KEY' )         { return $self->get_child_keys(@args); }
-    if ( uc $object_type eq 'COLUMN' )            { return $self->get_table_columns(@args); }
-    if ( uc $object_type eq 'DEPENDENCY' )        { return $self->get_dependencies(@args); }
-    if ( uc $object_type eq 'DEPENDENT' )         { return $self->get_dependents(@args); }
-    if ( uc $object_type eq 'DOMAIN' )            { return $self->get_domains(@args); }
-    if ( uc $object_type eq 'FOREIGN KEY' )       { return $self->get_foreign_keys(@args); }
-    if ( uc $object_type eq 'INDEX' )             { return $self->get_indexes(@args); }
-    if ( uc $object_type eq 'PRIMARY KEY' )       { return $self->get_primary_keys(@args); }
-    if ( uc $object_type eq 'SCHEMA' )            { return $self->get_schemas(@args); }
-    if ( uc $object_type eq 'TABLE' )             { return $self->get_tables(@args); }
-    if ( uc $object_type eq 'TYPE' )              { return $self->get_types(@args); }
-    if ( uc $object_type eq 'UNIQUE CONSTRAINT' ) { return $self->get_unique_constraints(@args); }
+    if ( uc $object_type eq 'CHECK CONSTRAINT' )     { return $self->get_check_constraints(@args); }
+    if ( uc $object_type eq 'CHILD KEY' )            { return $self->get_child_keys(@args); }
+    if ( uc $object_type eq 'COLUMN' )               { return $self->get_table_columns(@args); }
+    if ( uc $object_type eq 'DEPENDENCY' )           { return $self->get_dependencies(@args); }
+    if ( uc $object_type eq 'DEPENDENT' )            { return $self->get_dependents(@args); }
+    if ( uc $object_type eq 'DOMAIN' )               { return $self->get_domains(@args); }
+    if ( uc $object_type eq 'FOREIGN DATA SERVER' )  { return $self->get_foreign_data_server(@args); }
+    if ( uc $object_type eq 'FOREIGN DATA WRAPPER' ) { return $self->get_foreign_data_wrapper(@args); }
+    if ( uc $object_type eq 'FOREIGN KEY' )          { return $self->get_foreign_keys(@args); }
+    if ( uc $object_type eq 'INDEX' )                { return $self->get_indexes(@args); }
+    if ( uc $object_type eq 'PRIMARY KEY' )          { return $self->get_primary_keys(@args); }
+    if ( uc $object_type eq 'SCHEMA' )               { return $self->get_schemas(@args); }
+    if ( uc $object_type eq 'TABLE' )                { return $self->get_tables(@args); }
+    if ( uc $object_type eq 'TYPE' )                 { return $self->get_types(@args); }
+    if ( uc $object_type eq 'UNIQUE CONSTRAINT' )    { return $self->get_unique_constraints(@args); }
 
     $self->{logger}->log_error("No extraction routine available for $object_type objects...");
 
@@ -469,6 +471,71 @@ SELECT n.nspname AS domain_schema,
         my $domain_name = $row->[1];
         $return{$domain_name}{ $column_names[$_] } = $row->[$_] for ( 0 .. $#column_names );
     }
+    return wantarray ? %return : \%return;
+}
+
+sub get_foreign_data_server {
+    my ( $self, $filters ) = @_;
+    $self->{logger}->log_info("Retrieving foreign data server information...");
+    my %return;
+
+    my $query = qq{
+SELECT s.srvname AS srv_name,
+        array_to_string ( array (
+                SELECT quote_ident ( option_name ) || ' ' || quote_literal ( option_value )
+                    FROM pg_options_to_table ( s.srvoptions )
+            ),
+            ', ') AS srv_options
+    FROM pg_catalog.pg_foreign_server s
+        ON ( s.oid = f.ftserver )
+};
+
+    foreach my $row ( $self->_db_query( $query, $schema ) ) {
+        my $srv_name = $row->[0];
+        $return{$srv_name}{srv_options} = $row->[1];
+    }
+
+    return wantarray ? %return : \%return;
+}
+
+sub get_foreign_data_wrapper {
+    my ( $self, $filters ) = @_;
+    $self->{logger}->log_info("Retrieving foreign data wrapper information...");
+    my %return;
+    my $schema = $self->{schema};
+    my $table_filter = $self->_get_table_filter( 'c.relname', $filters );
+
+    my $query = qq{
+SELECT n.nspname AS schema_name,
+        c.relname AS table_name,
+        w.fdwname AS fdw_name,
+        s.srvname AS srv_name,
+        array_to_string ( array (
+                SELECT quote_ident ( option_name ) || ' ' || quote_literal ( option_value )
+                    FROM pg_options_to_table ( ftoptions )
+            ),
+            ', ')
+        AS fdw_options
+    FROM pg_catalog.pg_class c
+    LEFT JOIN pg_catalog.pg_namespace n
+        ON n.oid = c.relnamespace
+    JOIN pg_catalog.pg_foreign_table f
+        ON ( f.ftrelid = c.oid )
+    JOIN pg_catalog.pg_foreign_server s
+        ON ( s.oid = f.ftserver )
+    JOIN pg_catalog.pg_foreign_data_wrapper w
+        ON ( w.oid = s.srvfdw )
+    WHERE c.relkind IN ( 'f' )
+        AND n.nspname = ? $table_filter
+};
+
+    foreach my $row ( $self->_db_query( $query, $schema ) ) {
+        my $table_name = $row->[1];
+        $return{$table_name}{fdw_name}    = $row->[2];
+        $return{$table_name}{srv_name}    = $row->[3];
+        $return{$table_name}{fdw_options} = $row->[4];
+    }
+
     return wantarray ? %return : \%return;
 }
 
