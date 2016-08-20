@@ -6,6 +6,10 @@
     <meta http-equiv="Content-Type" content="utf-8" />
     <link rel="stylesheet" href="../css/main.css" type="text/css">
     <link rel="icon" href="../img/favicon.png" type="image/png">
+    [% UNLESS no_js %]<script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="../js/jquery.uitablefilter.js"></script>
+    <script type="text/javascript" src="../js/dd.odd-things.js"></script>[% END %]
   </head>
   <body>
 [% INCLUDE 'includes/navigation_bar.tt' %]
@@ -13,7 +17,7 @@
     <div id="ReportDetails">
       <h2>Tables that display potential oddness</h2>
 [% IF table_oddities %]
-      <table class="notablesorter">
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-tables" class="tablesorter"[% END %]>
 [% FOR t = table_oddities %][% IF loop.first() %]
         <thead>
           <tr>
@@ -49,7 +53,7 @@
 
       <h2>Columns that display potential oddness</h2>
 [% IF column_oddities %]
-      <table class="notablesorter">
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-columns" class="tablesorter"[% END %]>
 [% FOR t = column_oddities %][% IF loop.first() %]
         <thead>
         <tr>
