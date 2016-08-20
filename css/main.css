@@ -133,6 +133,15 @@ table.tablesorter tr:nth-child(even) {
     background-color: #ddd;
     color: #333;
 }
+table.pageheader th {
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+table.pageheader tr {
+    text-align: left;
+    vertical-align: top;
+}
 .mono {
     background-color: #eee;
     color: #333;
