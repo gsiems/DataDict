@@ -1,13 +1,13 @@
 body {
+    background-color: white;
     font-family: verdana,helvetica,sans-serif;
     margin: 0;
     padding: 0;
-    background-color: white;
 }
 h1 {
     border-bottom-style: solid;
     border-bottom-width: 2px;
-    color: #eeeeee;
+    color: #eee;
     font-size: 150%;
     font-weight: bold;
     margin-top: 0;
@@ -20,17 +20,16 @@ h2 {
     font-size: 140%;
     padding-bottom: 0.5ex;
 }
-
 #ReportHeader {
     background-color: #009ace;
-    border-color: #999999;
-    color: #eeeeee;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 10px;
-    padding-left: 10px;
+    border-bottom: 2px solid #999;
+    border-color: #999;
+    color: #eee;
     margin-bottom: 10px;
-    border-bottom: 2px solid #999999;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
 }
 #ReportDetails {
     font-size: 90%;
@@ -39,21 +38,20 @@ h2 {
     margin-right: 10px;
 }
 #ReportFooter {
-    background-color: #009ACE;
-    border-bottom: 2px solid #999999;
-    border-color: #999999;
-    border-top: 2px solid #999999;
-    color: #EEEEEE;
+    background-color: #009ace;
+    color: #eee;
+    border-bottom: 2px solid #999;
+    border-top: 2px solid #999;
     font-size: 90%;
     font-weight: bold;
     margin-top: 10px;
-    padding: 2px;
+    padding: 2px 7px 2px 2px;
     text-align: right;
 }
 #filter-form {
-    color: #eeeeee;
-    padding-top: 0.5ex;
+    color: #eee;
     padding-bottom: 1.0ex;
+    padding-top: 0.5ex;
 }
 .TTextCell {
     padding-left: 4px;
@@ -73,10 +71,13 @@ h2 {
     vertical-align: top;
     white-space: nowrap;
 }
-
+.comments {
+    margin-top: -1em;
+    margin-bottom: -1em;
+}
 #NavContainer ul {
     background-color: #003366;
-    color: White;
+    color: white;
     float: left;
     margin-left: 0;
     padding-left: 0;
@@ -87,60 +88,55 @@ h2 {
 }
 #NavContainer ul li a {
     background-color: #003366;
-    border-right: 1px solid #FFFFFF;
-    color: White;
+    border-right: 1px solid #fff;
+    color: white;
     float: left;
     padding: 0.2em 1em;
     text-decoration: none;
 }
 #NavContainer ul li a:hover {
     background-color: #336699;
-    color: #FFFFFF;
+    color: #fff;
 }
 table.tablesorter {
+    border-bottom: 1px solid #777;
+    border-left: 1px solid #777;
+    border-right: 1px solid #777;
     text-align: left;
     vertical-align: top;
-    border-right: 1px solid #777777;
-    border-left: 1px solid #777777;
-    border-bottom: 1px solid #777777;
     width: 100%;
 }
 table.tablesorter thead tr th {
-    background-color: #dddddd;
-    color: #009ace;
-    padding-left: 4px;
-    padding-right: 15px;
-    border-color: #777777;
-    border-bottom: 3px solid #777777;
-}
-table.tablesorter thead tr .header {
+    background-color: #ddd;
     background-position: right center;
     background-repeat: no-repeat;
-    border-bottom: 2px solid #777777;
+    border-bottom: 2px solid #777;
+    border-color: #777;
+    color: #009ace;
     cursor: pointer;
+    padding-left: 4px;
+    padding-right: 15px;
 }
 table.tablesorter thead tr .headerSortDown {
     background-color: #bfbfbf;
     background-image: url("../img/desc.gif");
 }
-
-table.tablesorter tbody td {
-    background-color: #dddddd;
+table.tablesorter thead tr .headerSortUp {
+    background-color: #bfbfbf;
+    background-image: url("../img/asc.gif");
 }
-table.tablesorter tbody tr.odd td {
-    background-color: #eeeeee;
+table.tablesorter tr:nth-child(odd) {
+    background-color: #eee;
+    color: #333;
 }
-
-table tr:nth-child(even) {
-    color: #009ace;
-    background-color: #eeeeee;
+table.tablesorter tr:nth-child(even) {
+    background-color: #ddd;
+    color: #333;
 }
-table tr:nth-child(odd) {
-    color: #009ace;
-    background-color: #dddddd;
-}
-
 .mono {
+    background-color: #eee;
+    color: #333;
+    padding: 5px;
     font-family: Bitstream Vera Sans Mono, Consolas, Courier New, DejaVu Sans Mono, Liberation Mono, Lucida Console, Monaco, monospace;
 }
 
@@ -152,4 +148,3 @@ table tr:nth-child(odd) {
     table.tablesorter   tbody td { font-size: 80%; border-top: 1px solid black; }
     table.notablesorter tbody td { font-size: 80%; border-top: 1px solid black; }
 }
-
