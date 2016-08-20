@@ -93,9 +93,8 @@ $(function() {
           <td class="TNoWrapCell">[% c.2 %]</td>
           <td class="TNoWrapCell">[% c.3 %]</td>
           <td class="TNoWrapCell">[% c.4 %]</td>
-          <td class="TTextCell">[% c.5 %]</td>
-        </tr>
-[% END %]
+          <td class="TTextCell"><div class="comments">[% c.5 %]</div></td>
+        </tr>[% END %]
         </tbody>
       </table>
       <br />
@@ -125,9 +124,8 @@ $(function() {
           <td class="TTextCell">[% c.2 %]</td>
           <td class="TNoWrapCell">[% c.3 | html %]</td>
           <td class="TNoWrapCell">[% c.4 %]</td>
-          <td class="TTextCell">[% c.5 %]</td>
-        </tr>
-  [% END %]
+          <td class="TTextCell"><div class="comments">[% c.5 %]</div></td>
+        </tr>[% END %]
         </tbody>
       </table>
       <br />
@@ -152,9 +150,8 @@ $(function() {
           <td class="TNoWrapCell">[% i.0 %]</td>
           <td class="TNoWrapCell">[% i.1 %]</td>
           <td class="TNoWrapCell">[% i.2 %]</td>
-          <td class="TTextCell">[% i.3 %]</td>
-        </tr>
-  [% END %]
+          <td class="TTextCell"><div class="comments">[% i.3 %]</div></td>
+        </tr>[% END %]
         </tbody>
       </table>
       <br />
@@ -186,9 +183,8 @@ $(function() {
           <td class="TNoWrapCell">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
           <td class="TTextCell">[% k.4 %]</td>
           <td class="TNoWrapCell">[% k.5 %]</td>
-          <td class="TTextCell">[% k.6 %]</td>
-        </tr>
-  [% END %]
+          <td class="TTextCell"><div class="comments">[% k.6 %]</div></td>
+        </tr>[% END %]
         </tbody>
       </table>
       <br />
@@ -218,9 +214,8 @@ $(function() {
           <td class="TTextCell">[% k.4 %]</td>
           <td class="TNoWrapCell">[% k.7 %]</td>
           <td class="TNoWrapCell">[% k.5 %]</td>
-          <td class="TTextCell">[% k.6 %]</td>
-        </tr>
-  [% END %]
+          <td class="TTextCell"><div class="comments">[% k.6 %]</div></td>
+        </tr>[% END %]
         </tbody>
       </table>
       <br />

@@ -57,7 +57,7 @@ $(function() {
           <td class="TNoWrapCell">[% d.3 %]</td>
           <td class="TTextCell">[% d.4 | html %]</td>
           <td class="TTextCell">[% d.5 | html %]</td>
-          <td class="TTextCell">[% d.6 %]</td>
+          <td class="TTextCell"><div class="comments">[% d.6 %]</div></td>
         </tr>
   [% END %]
         </tbody>
