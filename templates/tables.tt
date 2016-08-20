@@ -9,7 +9,7 @@
     [% UNLESS no_js %]<script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
     <script type="text/javascript" src="../js/jquery.tablesorter.js"></script>
     <script type="text/javascript" src="../js/jquery.uitablefilter.js"></script>
-    <script type="text/javascript" src="../js/dd.tables.js"></script>[% END %]
+    <script type="text/javascript" src="../js/dd.generic.js"></script>[% END %]
   </head>
   <body>
 [% INCLUDE 'includes/navigation_bar.tt' %]
