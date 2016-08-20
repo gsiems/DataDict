@@ -12,6 +12,6 @@
       <tr><th>Table Comment:</th><td><div class="comments">[% table_comment %]</div></td></tr>
       <tr><th>Row Count:</th><td>[% row_count %]</td></tr>
       [% END %]
-      [% UNLESS no_js %]<tr><th>Filter: </th><td><form id="filter-form"><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form></td></tr>[% END %]
+      [% UNLESS no_js %][% UNLESS no_filter %]<tr><th>Filter: </th><td><form id="filter-form"><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form></td></tr>[% END %][% END %]
     </table>
   </div>

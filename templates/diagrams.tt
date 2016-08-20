@@ -13,7 +13,7 @@
   </head>
   <body>
 [% INCLUDE 'includes/navigation_bar.tt' %]
-[% INCLUDE 'includes/db_header.tt' %]
+[% no_filter = 'Y' %][% INCLUDE 'includes/db_header.tt' %]
     <div id="ReportDetails">
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-data" class="tablesorter"[% END %]>
         <thead>
