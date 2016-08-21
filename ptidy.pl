@@ -7,9 +7,9 @@ use FindBin;
 
 my $critic = Perl::Critic->new();
 
-my $lib_path = "$FindBin::Bin/lib";
+my $path = "$FindBin::Bin";
 
-my @files = `find $lib_path -type f -name "*.pm"`;
+my @files = `find $path -type f -name "*.p?" | grep -v git_ignore`;
 chomp @files;
 
 foreach my $file (@files) {
