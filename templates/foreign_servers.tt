@@ -12,6 +12,14 @@
     <script type="text/javascript" src="js/dd.generic.js"></script>[% END %]
   </head>
   <body>
+[% IF has_foreign_servers %]
+    <div id="NavContainer">
+      <ul id="navlist">
+        <li><a href="[% nav_prefix %]foreign_servers.html">Foreign servers</a></li>
+        <li><a href="[% nav_prefix %]index.html">Schemas</a></li>
+      </ul>
+    </div>
+[% END %]
 [% INCLUDE 'includes/db_header.tt' %]
     <div id="ReportDetails">
       <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-data" class="tablesorter"[% END %]>
