@@ -487,10 +487,10 @@ SELECT s.srvname AS srv_name,
             ),
             ', ') AS srv_options
     FROM pg_catalog.pg_foreign_server s
-        ON ( s.oid = f.ftserver )
+    ORDER BY s.srvname
 };
 
-    foreach my $row ( $self->_db_query( $query, $schema ) ) {
+    foreach my $row ( $self->_db_query( $query ) ) {
         my $srv_name = $row->[0];
         $return{$srv_name}{srv_options} = $row->[1];
     }
