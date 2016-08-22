@@ -50,7 +50,17 @@ $tt_vars{database_version}  = $db_version;
 $tt_vars{database_comment}  = $db_comment;
 $tt_vars{database_encoding} = $db_encoding;
 
-my @foreign_servers = $extractor->get_objects('FOREIGN DATA SERVER');
+my $fs = $extractor->get_objects('FOREIGN DATA SERVER');
+my @foreign_servers;
+if ($fs) {
+    foreach my $srv ( sort keys %{$fs} ) {
+        my $srv_owner   = $fs->{$srv}{srv_owner};
+        my $fdw_name    = $fs->{$srv}{fdw_name};
+        my $srv_options = $fs->{$srv}{srv_options};
+        my $srv_comment = format_comment( $fs->{$srv}{comments} );
+        push @foreign_servers, [ $srv, $srv_owner, $fdw_name, $srv_options, $srv_comment ];
+    }
+}
 $tt_vars{has_foreign_servers} = ( @foreign_servers && scalar @foreign_servers ) ? 1 : 0;
 
 my %schemas = get_schemas();
@@ -706,12 +716,12 @@ sub build_table_doc {
 
     # Foreign data wrappers
     foreach my $table_name ( sort keys %{ $objects->{'FOREIGN DATA WRAPPER'} } ) {
+        my $fdw_name     = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{fdw_name};
+        my $srv_name     = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{srv_name};
+        my $fdw_options  = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{fdw_options};
+        my $fdw_comments = format_comment( $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{comments} );
 
-        my $fdw_name    = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{fdw_name};
-        my $srv_name    = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{srv_name};
-        my $fdw_options = $objects->{'FOREIGN DATA WRAPPER'}{$table_name}{fdw_options};
-
-        push @{ $temp{$table_name}{foreign_wrappers} }, [ $fdw_name, $srv_name, $fdw_options ];
+        push @{ $temp{$table_name}{foreign_wrappers} }, [ $fdw_name, $srv_name, $fdw_options, $fdw_comments ];
     }
 
     my @optionals = (qw(constraints indices child_keys parent_keys query dependencies dependents foreign_wrappers));

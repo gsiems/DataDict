@@ -481,18 +481,33 @@ sub get_foreign_data_server {
 
     my $query = qq{
 SELECT s.srvname AS srv_name,
-        array_to_string ( array (
-                SELECT quote_ident ( option_name ) || ' ' || quote_literal ( option_value )
-                    FROM pg_options_to_table ( s.srvoptions )
-            ),
-            ', ') AS srv_options
+        pg_catalog.pg_get_userbyid(s.srvowner) AS server_owner,
+        f.fdwname AS fdw_name,
+        CASE
+            WHEN srvoptions IS NULL THEN ''
+            ELSE array_to_string ( array (
+                    SELECT quote_ident ( option_name ) || ' ' || quote_literal ( option_value )
+                        FROM pg_options_to_table ( s.srvoptions )
+                ),
+                ', ')
+            END AS srv_options,
+        d.description AS comments
     FROM pg_catalog.pg_foreign_server s
+    JOIN pg_catalog.pg_foreign_data_wrapper f
+        ON ( f.oid=s.srvfdw )
+    LEFT JOIN pg_description d
+        ON ( d.classoid = s.tableoid
+            AND d.objoid = s.oid
+            AND d.objsubid = 0 )
     ORDER BY s.srvname
 };
 
-    foreach my $row ( $self->_db_query( $query ) ) {
+    foreach my $row ( $self->_db_query($query) ) {
         my $srv_name = $row->[0];
-        $return{$srv_name}{srv_options} = $row->[1];
+        $return{$srv_name}{srv_owner}   = $row->[1];
+        $return{$srv_name}{fdw_name}    = $row->[2];
+        $return{$srv_name}{srv_options} = $row->[3];
+        $return{$srv_name}{comments}    = $row->[4];
     }
 
     return wantarray ? %return : \%return;

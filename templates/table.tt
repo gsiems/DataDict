@@ -222,6 +222,33 @@
 [% END %]
 [% END %]
 
+
+[% IF foreign_wrappers %]
+      <h2>Foreign Data Wrapper</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-wrapperdata" class="tablesorter"[% END %]>
+[% FOR k = foreign_wrappers %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Wrapper Name</th>
+          <th>Server Name</th>
+          <th>Wrapper Options</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TNoWrapCell">[% k.0 %]</td>
+          <td class="TTextCell">[% k.1 %]</td>
+          <td class="TTextCell">[% k.2 %]</td>
+          <td class="TTextCell"><div class="comments">[% k.3 %]</div></td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
 [% IF query %]
       <h2>Query</h2>
 <div class="mono">

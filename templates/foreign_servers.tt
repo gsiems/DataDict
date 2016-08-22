@@ -26,6 +26,8 @@
         <thead>
         <tr>
           <th>Server Name</th>
+          <th>Owner</th>
+          <th>Wrapper Name</th>
           <th>Options</th>
           <th>Comment</th>
         </tr>
@@ -35,7 +37,9 @@
         <tr>
           <td class="TTextCell">[% s.0 %]</td>
           <td class="TTextCell">[% s.1 %]</td>
-          <td class="TTextCell"><div class="comments">[% s.2 %]</div></td>
+          <td class="TTextCell">[% s.2 %]</td>
+          <td class="TTextCell">[% s.3 %]</td>
+          <td class="TTextCell"><div class="comments">[% s.4 %]</div></td>
         </tr>[% END %]
       </tbody>
       </table>
