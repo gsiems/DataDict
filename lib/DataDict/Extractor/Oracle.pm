@@ -10,7 +10,12 @@ use warnings;
 sub _post_init {
     my ($self) = @_;
 
-    # determine which tables 'ALL_*' vs. 'DBA_*' the user is able to query
+    # Determine which tables 'ALL_*' vs. 'DBA_*' the user is able to
+    # query. Also, check to see if the database has a db_comments schema
+    # (https://github.com/gsiems/oracle-comments).
+    #
+    # ASSERTION: If the database has a db_comments schema then the user
+    # can select from those tables.
     my $str = q{
 SELECT  table_name
     FROM sys.all_tab_privs
@@ -18,6 +23,10 @@ SELECT  table_name
             OR table_name IN ( 'V$VERSION', 'NLS_DATABASE_PARAMETERS', 'NLS_SESSION_PARAMETERS' )
             )
         AND privilege = 'SELECT'
+UNION
+SELECT  owner || '.' || table_name
+    FROM sys.all_tables
+    WHERE owner ='DB_COMMENTS'
 };
 
     $self->{sysuser_list} = "'" . join(
@@ -494,7 +503,9 @@ sub get_db_comment {
     my ($self) = @_;
     $self->{logger}->log_info("Retrieving database comment information...");
 
-    {
+    my $comment;
+
+    if ( $self->_has_select_priv('db_comments.database_comment') ) {
         my $str = q{
     SELECT comments
         FROM db_comments.database_comment
@@ -504,10 +515,10 @@ sub get_db_comment {
         if ($sth) {
             $sth->execute();
             my $row = $sth->fetch();
-            return $row->[0];
+            $comment = $row->[0];
         }
     }
-    return undef;
+    return $comment;
 }
 
 sub get_db_version {
@@ -931,7 +942,7 @@ SELECT owner
     # Since Oracle does not support commenting on schemas, add any
     # schema comment information found by other means.
     # First, see if the database is using: https://github.com/gsiems/oracle-comments
-    {
+    if ( $self->_has_select_priv('db_comments.v_global_comment') ) {
         my $str = q{
     SELECT object_name,
             comments
