@@ -772,8 +772,10 @@ sub process_template {
     $util->mkpath($target_dir);
 
     my $tt = Template->new( INCLUDE_PATH => $template_path, ) || die "$Template::ERROR\n";
-    $tt->process( $template_file, $vars, $target_path ) || die $tt->error(), "\n";
+    my $text;
+    $tt->process( $template_file, $vars, \$text ) || die $tt->error(), "\n";
 
+    write_file( $target_file, $text );
 }
 
 sub write_file {
