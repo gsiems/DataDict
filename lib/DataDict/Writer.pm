@@ -60,7 +60,7 @@ sub _open_text_output {
     $self->{handle} = new IO::File;
     $self->{handle}->open( $self->{file}, $mode )
         || $self->_log_fatal( "Could not open " . $self->{file} . " for output. $!" );
-    $self->{handle}->binmode();
+    $self->{handle}->binmode(':utf8');
 }
 
 sub _open_gzip_output {
