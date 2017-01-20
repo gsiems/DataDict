@@ -20,13 +20,13 @@ sub _has_priv {
 }
 
 sub extract_data {
-    my ( $self, %args ) = @_;
+    my ( $self, $args ) = @_;
     $self->{logger}->log_info("Extracting data ...");
     my $schema         = $self->{schema};
-    my $table_name     = $args{table_name};
-    my $where_clause   = $args{where_clause} || '';
-    my $order_by       = $args{order_by} || '';
-    my $exclude_binary = $args{exclude_binary} || 0;
+    my $table_name     = $args->{table_name};
+    my $where_clause   = $args->{where_clause} || '';
+    my $order_by       = $args->{order_by} || '';
+    my $exclude_binary = $args->{exclude_binary} || 0;
 
     my %filter = ( IN => [$table_name], );
     # filter columns {all, excluded?, non-blob?}
