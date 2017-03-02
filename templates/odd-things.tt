@@ -61,6 +61,7 @@
           <th>Column</th>
           <th>Nullable and part of a unique constraint</th>
           <th>Nullable and part of a unique index</th>
+          <th>Nullable with a default value</th>
           <th>Defaults to NULL or 'NULL'</th>
         </tr>
         </thead>
@@ -72,6 +73,7 @@
           <td class="TNoWrapCell">[% IF t.2 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
           <td class="TNoWrapCell">[% IF t.3 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
           <td class="TNoWrapCell">[% IF t.4 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
+          <td class="TNoWrapCell">[% IF t.5 %]<img src="../img/alert.png" alt="Is checked">[% END %]</td>
         </tr>
   [% END %]
       </tbody>

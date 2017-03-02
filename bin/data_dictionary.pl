@@ -448,6 +448,19 @@ sub build_column_oddities_list {
         }
     }
 
+    # Nullable with default values
+    foreach my $table_name ( sort keys %{ $objects->{'COLUMN'} } ) {
+        foreach my $column_name ( @{ $objects->{'COLUMN'}{$table_name}{column_names} } ) {
+            my $nullable = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{is_nullable} || '';
+            if ( 'Y' eq $nullable ) {
+                my $default = $objects->{'COLUMN'}{$table_name}{columns}{$column_name}{data_default};
+                if ( defined $default and length($default) > 0 ) {
+                    $temp{$table_name}{$column_name}{nullable_with_default} = 1;
+                }
+            }
+        }
+    }
+
     # 'NULL' default values
     foreach my $table_name ( sort keys %{ $objects->{'COLUMN'} } ) {
         foreach my $column_name ( @{ $objects->{'COLUMN'}{$table_name}{column_names} } ) {
@@ -462,11 +475,17 @@ sub build_column_oddities_list {
 
     foreach my $table_name ( sort keys %temp ) {
         foreach my $column_name ( sort keys %{ $temp{$table_name} } ) {
-            my $null_constraint    = $temp{$table_name}{$column_name}{null_constraint}    || 0;
-            my $null_unique_index  = $temp{$table_name}{$column_name}{null_unique_index}  || 0;
-            my $hinky_null_default = $temp{$table_name}{$column_name}{hinky_null_default} || 0;
+            my $null_constraint       = $temp{$table_name}{$column_name}{null_constraint}       || 0;
+            my $null_unique_index     = $temp{$table_name}{$column_name}{null_unique_index}     || 0;
+            my $nullable_with_default = $temp{$table_name}{$column_name}{nullable_with_default} || 0;
+            my $hinky_null_default    = $temp{$table_name}{$column_name}{hinky_null_default}    || 0;
 
-            push @data, [ $table_name, $column_name, $null_constraint, $null_unique_index, $hinky_null_default ];
+            push @data,
+                [
+                $table_name,            $column_name,
+                $null_constraint,       $null_unique_index,
+                $nullable_with_default, $hinky_null_default
+                ];
         }
     }
 
