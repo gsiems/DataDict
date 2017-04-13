@@ -1,0 +1,12 @@
+    <div id="NavContainer">
+      <ul id="navlist">
+        [% IF has_foreign_servers %]<li><a href="[% nav_prefix %]../foreign_servers.html">Foreign servers</a></li>[% END %]
+        <li><a href="[% nav_prefix %]../index.html">Schemas</a></li>
+        <li><a href="[% nav_prefix %]columns.html">Columns</a></li>
+        [% IF has_domains %]<li><a href="[% nav_prefix %]domains.html">Domains</a></li>[% END %]
+        [% IF has_constraints %]<li><a href="[% nav_prefix %]constraints.html">Constraints</a></li>[% END %]
+        <li><a href="[% nav_prefix %]tables.html">Tables</a></li>
+        [% IF has_oddness %]<li><a href="[% nav_prefix %]odd-things.html">Odd things</a></li>[% END %]
+        <li><a href="[% nav_prefix %]diagrams.html">Diagrams</a></li>
+      </ul>
+    </div>

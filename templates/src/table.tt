@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    [% ta = ['Table - ', database_name, '.', schema_name, '.', table_name] %][% title = ta.join('') %]
+    <title>[% title %]</title>
+    <meta http-equiv="Content-Type" content="utf-8" />
+    <link rel="stylesheet" href="../../css/main.css" type="text/css">
+    <link rel="icon" href="../../img/favicon.png" type="image/png">
+    [% UNLESS no_js %]<script type="text/javascript" src="../../js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="../../js/jquery.uitablefilter.js"></script>
+    <script type="text/javascript" src="../../js/dd.table.js"></script>[% END %]
+  </head>
+  <body>
+[% nav_prefix = '../' %]
+[% INCLUDE 'includes/navigation_bar.tt' %]
+[% INCLUDE 'includes/db_header.tt' %]
+    <div id="ReportDetails">
+      <h2>Columns</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-coldata" class="tablesorter"[% END %]>
+[% FOR c = columns %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Column</th>
+          <th>Ordinal Position</th>
+          <th>Data Type</th>
+          <th>Nulls</th>
+          <th>Default</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+[% END %]
+        <tr>
+          <td class="TC2">[% c.0 %]</td>
+          <td class="TCn">[% c.1 %]</td>
+          <td class="TC2">[% c.2 %]</td>
+          <td class="TC2">[% c.3 %]</td>
+          <td class="TC2">[% c.4 %]</td>
+          <td class="TC1"><div class="comments">[% c.5 %]</div></td>
+        </tr>[% END %]
+        </tbody>
+      </table>
+      <br />
+
+[% IF table_type != 'VIEW' %]
+
+[% IF table_type == 'TABLE' %]
+      <h2>Constraints</h2>
+[% IF constraints %]
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-consdata" class="tablesorter"[% END %]>
+[% FOR c = constraints %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Columns</th>
+          <th>Search Condition</th>
+          <th>Status</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% c.0 %]</td>
+          <td class="TC2">[% c.1 %]</td>
+          <td class="TC1">[% c.2 %]</td>
+          <td class="TC2">[% c.3 | html %]</td>
+          <td class="TC2">[% c.4 %]</td>
+          <td class="TC1"><div class="comments">[% c.5 %]</div></td>
+        </tr>[% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+[% END %]
+
+      <h2>Indices</h2>
+[% IF indices %]
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-idxdata" class="tablesorter"[% END %]>
+[% FOR i = indices %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Unique ?</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% i.0 %]</td>
+          <td class="TC2">[% i.1 %]</td>
+          <td class="TC2">[% i.2 %]</td>
+          <td class="TC1"><div class="comments">[% i.3 %]</div></td>
+        </tr>[% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF table_type == 'TABLE' %]
+      <h2>Foreign keys</h2>
+[% IF parent_keys %]
+      <p><b>Parents (references)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ikeydata" class="tablesorter"[% END %]>
+[% FOR k = parent_keys %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Indexed?</th>
+          <th>Referenced Table</th>
+          <th>Referenced Columns</th>
+          <th>Rule</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% k.0 %]</td>
+          <td class="TC1">[% k.1 %]</td>
+          <td class="TC1">[% k.7 %]</td>
+          <td class="TC2">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
+          <td class="TC1">[% k.4 %]</td>
+          <td class="TC2">[% k.5 %]</td>
+          <td class="TC1"><div class="comments">[% k.6 %]</div></td>
+        </tr>[% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF child_keys %]
+      <p><b>Children (referenced by)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-ekeydata" class="tablesorter"[% END %]>
+[% FOR k = child_keys %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Columns</th>
+          <th>Referencing Table</th>
+          <th>Referencing Columns</th>
+          <th>Indexed?</th>
+          <th>Rule</th>
+          <th>Comment</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% k.0 %]</td>
+          <td class="TC1">[% k.1 %]</td>
+          <td class="TC2">[% k.2 %].<a href="../../[% k.2 %]/tables/[% k.3 %].html">[% k.3 %]</a></td>
+          <td class="TC1">[% k.4 %]</td>
+          <td class="TC2">[% k.7 %]</td>
+          <td class="TC2">[% k.5 %]</td>
+          <td class="TC1"><div class="comments">[% k.6 %]</div></td>
+        </tr>[% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+[% END %]
+[% END %]
+
+[% IF dependencies OR dependents OR dependency_error %]
+      <h2>Dependencies</h2>
+
+[% IF dependencies %]
+      <p><b>Parents (this depends on)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-pdepdata" class="tablesorter"[% END %]>
+[% FOR k = dependencies %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Object Schema</th>
+          <th>Object Name</th>
+          <th>Object Type</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% k.0 %]</td>
+          <td class="TC2">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
+          <td class="TC2">[% k.2 %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% ELSIF dependency_error %]
+      <p><b>[% dependency_error %]</b></p>
+
+[% END %]
+[% IF dependents %]
+      <p><b>Children (depends on this)</b></p>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-cdepdata" class="tablesorter"[% END %]>
+[% FOR k = dependents %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Object Schema</th>
+          <th>Object Name</th>
+          <th>Object Type</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% k.0 %]</td>
+          <td class="TC2">[% IF k.2 == 'TABLE' OR k.2 == 'VIEW' OR k.2 == 'MATERIALIZED VIEW' OR k.2 == 'FOREIGN TABLE' %]<a href="../../[% k.0 %]/tables/[% k.1 %].html">[% k.1 %]</a>[% ELSE %][% k.1 %][% END %]</td>
+          <td class="TC2">[% k.2 %]</td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+
+[% END %]
+[% END %]
+
+
+[% IF foreign_wrappers %]
+      <h2>Foreign Data Wrapper</h2>
+      <table width="100.0%" [% IF no_js %] class="notablesorter"[% ELSE %]id="tablesorter-wrapperdata" class="tablesorter"[% END %]>
+[% FOR k = foreign_wrappers %][% IF loop.first() %]
+        <thead>
+        <tr>
+          <th>Wrapper Name</th>
+          <th>Server Name</th>
+          <th>Wrapper Options</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+    [% END %]
+        <tr>
+          <td class="TC2">[% k.0 %]</td>
+          <td class="TC1">[% k.1 %]</td>
+          <td class="TC1">[% k.2 %]</td>
+          <td class="TC1"><div class="comments">[% k.3 %]</div></td>
+        </tr>
+  [% END %]
+        </tbody>
+      </table>
+      <br />
+[% END %]
+
+[% IF query %]
+      <h2>Query</h2>
+<div class="mono">
+[% query %]
+</div>
+[% END %]
+
+    </div>
+    <div id="ReportFooter">Report generated by [% bin_file %]<br/>
+      <a href="https://github.com/gsiems/DataDict">Github page</a>
+    </div>
+    <br />
+  </body>
+</html>

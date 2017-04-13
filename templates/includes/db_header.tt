@@ -1,17 +1,1 @@
-  <div id="ReportHeader"><h1>[% title %]</h1>
-    <table class="pageheader">
-      <tr><th>Generated:</th><td>[% run_timestamp %]</td></tr>
-      <tr><th>Database Version:</th><td>[% database_version %]</td></tr>
-      <tr><th>Database:</th><td>[% database_name %]</td></tr>
-      [% IF database_comment %]<tr><th>Database Comment:</th><td><div class="comments">[% database_comment %]</div></td></tr>[% END %]
-      [% IF schema_name  && schema_name != '' %]<tr><th>Schema:</th><td>[% schema_name %]</td></tr>
-        [% IF schema_comment %]<tr><th>Schema Comment:</th><td><div class="comments">[% schema_comment %]</div></td></tr>[% END %]
-      [% END %]
-      [% IF table_name && table_name != '' %]<tr><th>Table Name:</th><td>[% table_name %]</td></tr>
-      <tr><th>Table Type:</th><td>[% table_type %]</td></tr>
-      <tr><th>Table Comment:</th><td><div class="comments">[% table_comment %]</div></td></tr>
-      <tr><th>Row Count:</th><td>[% row_count %]</td></tr>
-      [% END %]
-      [% UNLESS no_js %][% UNLESS no_filter %]<tr><th>Filter: </th><td><form id="filter-form"><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form></td></tr>[% END %][% END %]
-    </table>
-  </div>
+<div id="ReportHeader"><h1>[% title %]</h1><table class="pageheader"><tr><th>Generated:</th><td>[% run_timestamp %]</td></tr><tr><th>Database Version:</th><td>[% database_version %]</td></tr><tr><th>Database:</th><td>[% database_name %]</td></tr>[% IF database_comment %]<tr><th>Database Comment:</th><td><div class="comments">[% database_comment %]</div></td></tr>[% END %][% IF schema_name  && schema_name != '' %]<tr><th>Schema:</th><td>[% schema_name %]</td></tr>[% IF schema_comment %]<tr><th>Schema Comment:</th><td><div class="comments">[% schema_comment %]</div></td></tr>[% END %][% END %][% IF table_name && table_name != '' %]<tr><th>Table Name:</th><td>[% table_name %]</td></tr><tr><th>Table Type:</th><td>[% table_type %]</td></tr><tr><th>Table Comment:</th><td><div class="comments">[% table_comment %]</div></td></tr><tr><th>Row Count:</th><td>[% row_count %]</td></tr>[% END %][% UNLESS no_js %][% UNLESS no_filter %]<tr><th>Filter: </th><td><form id="filter-form"><input name="filter" id="filter" value="" maxlength="32" size="32" type="text"></form></td></tr>[% END %][% END %]</table></div>

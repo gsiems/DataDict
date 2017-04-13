@@ -53,18 +53,21 @@ h2 {
     padding-bottom: 1.0ex;
     padding-top: 0.5ex;
 }
-.TTextCell {
+/* TC1: Standard table text cells */
+.TC1 {
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: top;
 }
-.TNoWrapCell {
+/* TC2: Non-wrapping table text cells */
+.TC2 {
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: top;
     white-space: nowrap;
 }
-.TNumericCell {
+/* TCn: Numeric table cells. Note that this is probably backwards for RTL languages. */
+.TCn {
     padding-left: 4px;
     padding-right: 8px;
     text-align: right;
