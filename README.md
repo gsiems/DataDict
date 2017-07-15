@@ -78,6 +78,11 @@ Not required. {1, 0} Indicates whether or not to show the sql for
 queries, views or materialized views. The default (0) is to not
 extract/show queries.
 
+#### wiki_format
+
+Not required. Indicates that the database comments should be rendered
+as wiki markup. Only "Markdown" is currently supported.
+
 #### schemas
 
 Not required. The comma separated list of schemas to use in creating
