@@ -50,6 +50,13 @@ require a login.
 The password for connecting to the database. For databases that require
 a login.
 
+#### database_comment
+
+Not required. Allows specifying a database comment for database engines
+that do not support database comments. If a database does support
+database comments and a database_comment is specified in the
+configuration then the configuration comment is used.
+
 #### target_dir
 
 Not required. The base directory to write the data dictionary to.

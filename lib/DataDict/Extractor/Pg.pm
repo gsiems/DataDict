@@ -264,14 +264,23 @@ sub get_db_comment {
     my ($self) = @_;
     $self->{logger}->log_info("Retrieving database comment information...");
 
-    my $query = q{
+    my $comment;
+
+    if ( exists $self->{database_comment} && $self->{database_comment} ) {
+        $comment = $self->{database_comment};
+    }
+    else {
+
+        my $query = q{
 SELECT pg_catalog.shobj_description ( d.oid, 'pg_database' ) AS COMMENT
     FROM pg_catalog.pg_database d
     WHERE d.datname = pg_catalog.current_database ()
 };
 
-    my ($row) = $self->_db_fetch($query);
-    return $row->[0];
+        my ($row) = $self->_db_fetch($query);
+        $comment = $row->[0];
+    }
+    return $comment;
 }
 
 sub get_db_version {

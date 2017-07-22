@@ -27,6 +27,10 @@ UNION
 SELECT  owner || '.' || table_name
     FROM sys.all_tables
     WHERE owner ='DB_COMMENTS'
+UNION
+SELECT  owner || '.' || view_name
+    FROM sys.all_views
+    WHERE owner ='DB_COMMENTS'
 };
 
     $self->{sysuser_list} = "'" . join(
@@ -505,17 +509,23 @@ sub get_db_comment {
 
     my $comment;
 
-    if ( $self->_has_select_priv('db_comments.database_comment') ) {
-        my $str = q{
-    SELECT comments
-        FROM db_comments.database_comment
-    };
+    if ( exists $self->{database_comment} && $self->{database_comment} ) {
+        $comment = $self->{database_comment};
+    }
+    else {
 
-        my $sth = $self->{dbh}->prepare($str);
-        if ($sth) {
-            $sth->execute();
-            my $row = $sth->fetch();
-            $comment = $row->[0];
+        if ( $self->_has_select_priv('db_comments.database_comment') ) {
+            my $str = q{
+SELECT comments
+    FROM db_comments.database_comment
+};
+
+            my $sth = $self->{dbh}->prepare($str);
+            if ($sth) {
+                $sth->execute();
+                my $row = $sth->fetch();
+                $comment = $row->[0];
+            }
         }
     }
     return $comment;

@@ -38,13 +38,6 @@ sub _post_set_schema {
     }
 }
 
-sub get_db_comment {
-    my ($self) = @_;
-    $self->{logger}->log_info("Retrieving database comment information...");
-    my $comment = $self->{database_comment} || '';
-    return $comment;
-}
-
 sub _table_list {
     my ($self) = @_;
     my @tables = sort `mdb-tables -1 $self->{db_filename}`;

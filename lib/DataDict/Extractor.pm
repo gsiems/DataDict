@@ -100,9 +100,16 @@ sub extract_done               { return undef }
 sub get_objects                { return undef }
 sub get_db_encoding            { return undef }
 sub get_db_version             { return undef }
-sub get_db_comment             { return undef }
 sub get_schema_comment         { return undef }
 sub get_table_dependency_order { return undef }
+#sub get_db_comment             { return undef }
+
+sub get_db_comment {
+    my ($self) = @_;
+    $self->{logger}->log_info("Retrieving database comment information...");
+    my $comment = $self->{database_comment} || '';
+    return $comment;
+}
 
 sub _array_to_str {
     my ( $self, @ary ) = @_;
