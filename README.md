@@ -1,4 +1,6 @@
 
+This project has been replaced by https://github.com/gsiems/db-dictionary 
+
 ## Introduction
 
 **DataDict** is a relational database data meta-data extraction and
